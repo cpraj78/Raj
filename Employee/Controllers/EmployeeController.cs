@@ -31,7 +31,7 @@ namespace Employee.Controllers
             return Ok(employee);
         }*/
 
-        // GET: api/EmployeesAPI
+        // GET: api/EmployeesAPI1
         [HttpGet]
         [Route("P1/GetEmployees")]
         public IEnumerable<Employee.Models.Employee> GetEmployees()
