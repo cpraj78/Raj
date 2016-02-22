@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <script src="Scripts/angular.min.js"></script>
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('formCtrl', function ($scope, $http) {
+
+            $scope.IsNewRecord = 1; //The flag for the new record
+
+            loadRecords(); 
+
+            //$scope.EmployeeName = 'John';
+            $scope.submitForm = function () {
+              
+                //alert($scope.EmployeeName)
+                //Create new record
+                debugger;
+                var Employee = {
+                    EmployeeName: $scope.EmployeeName,
+                    EmployeeAge: $scope.EmployeeAge,
+                    EmployeeId: $scope.EmployeeId
+                };
+                  
+                var emp = $http.post("/P1/PostEmployees", Employee);
+
+                emp.success(function (data, status, headers, config) {
+                    alert("Employee addded");
+                    loadRecords();
+                });
+                emp.error(function (data, status, headers, config) {
+                    alert("error")
+                });
+
+                $scope.EmployeeName = "";
+                $scope.EmployeeAge = "";
+                $scope.EmployeeId = "";
+
+                    
+            }
+
+
+
+            //Function to load all Employee records
+            function loadRecords() {
+
+                var emp = $http.get("P1/GetEmployees");
+                emp.success(function (data, status, headers, config) {
+                    $scope.Employee=data
+                   
+                });
+                emp.error(function (data, status, headers, config) {
+                    alert("error")
+                });
+            }
+
+           
+
+
+            //Method to Get Single Employee based on EmpNo
+            $scope.get = function (Emp) {
+                var EmpId = Emp.EmployeeId;
+
+                var empReturn = $http.get("P1/GetEmployees/" + EmpId);
+                empReturn.success(function (data, status, headers, config) {
+                    $scope.EmployeeId = data.EmployeeId;
+                    $scope.EmployeeName = data.EmployeeName;
+                    $scope.EmployeeAge = data.EmployeeAge;
+                });
+                empReturn.error(function (data, status, headers, config) {
+                    alert("error")
+                });
+
+            }
+
+            //Clear the Scopr models
+            $scope.clear = function () {
+                $scope.IsNewRecord = 1;
+                $scope.EmployeeId = 0;
+                $scope.EmployeeName = "";
+                $scope.EmployeeAge = 0;
+              
+            }
+
+        
+
+        });
+    </script>
+    
+</head>
+<body>
+    
+        <div ng-app="myApp" ng-controller="formCtrl">
+            <table>
+                <tr>
+                    <td>Id: </td>
+                    <td><input type="text" ng-model="EmployeeId" required /></td>
+                </tr>
+                <tr>
+                    <td>Name: </td>
+                    <td><input type="text"  ng-model="EmployeeName" required /></td>
+                </tr>
+                <tr>
+                    <td>Age: </td>
+                    <td><input type="number" ng-model="EmployeeAge" required /> </td>
+                </tr>
+                <tr><td><button ng-click="submitForm()">save</button> </td> <td><button ng-click="clear()">Clear</button></td></tr>
+
+            </table>
+
+
+            <table id="tblcollections">
+                <thead>
+                    <tr>
+                        <th>EmployeeId</th>
+                        <th>EmployeeName</th>
+                        <th>EmployeeAge</th>
+
+                    </tr>
+                </thead>
+                <tbody ng-repeat="Emp in Employee">
+                    <tr ng-click="get(Emp)">
+                        <td> <span>{{Emp.EmployeeId}}</span></td>
+                        <td> <span>{{Emp.EmployeeName}}</span></td>
+                        <td> <span>{{Emp.EmployeeAge}}</span></td>
+
+                    </tr>
+                </tbody>
+            </table>
+                
+         
+
+        </div>
+    
+</body>
+</html>
